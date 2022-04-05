@@ -1,0 +1,214 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>학습조직 채팅만들기</title>
+    <meta name="robots" content="noindex, follow" />
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- CSS
+	============================================ -->
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/theme/assets/css/vendor/bootstrap.min.css">
+
+    <!-- Icon Font CSS -->
+    <link rel="stylesheet" href="/assets/theme/assets/css/vendor/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="/assets/theme/assets/css/vendor/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/theme/assets/css/vendor/themify-icons.css">
+    <link rel="stylesheet" href="/assets/theme/assets/css/vendor/cryptocurrency-icons.css">
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="/assets/theme/assets/css/plugins/plugins.css">
+
+    <!-- Helper CSS -->
+    <link rel="stylesheet" href="/assets/theme/assets/css/helper.css">
+
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="/assets/theme/assets/css/style.css">
+
+    <!-- Custom Style CSS Only For Demo Purpose -->
+    <link id="cus-style" rel="stylesheet" href="/assets/theme/assets/css/style-primary.css">
+
+</head>
+
+<body>
+
+    <div class="main-wrapper" >
+            <!-- Page Headings Start -->
+            <div class="row justify-content-between align-items-center" id="title">
+
+                <!-- Page Heading Start -->
+                <div class="col-12 col-lg-auto mb-20 mt-20 pl-30">
+                    <div class="page-heading">
+                        <h3>학습조직 <span>/ 채팅서비스</span></h3>
+                    </div>
+                </div><!-- Page Heading End -->
+
+            </div><!-- Page Headings End -->
+
+            <div class="row" style="background-color: skyblue;" id="screen" >
+                <!-- Chat App Start -->
+                <div class="col-12" >
+                    <div class="chat-app-wrap" >
+
+                        <!--Chat Contacts Start-->
+                        <div class="chat-contacts" >
+
+                            <!--Chat Contact Search Start-->
+                            <div class="contact-search-form">
+                                <form action="#">
+                                    <input type="text" placeholder="접속된 사용자">
+                                </form>
+                            </div>
+                            <!--Chat Contact Search End-->
+
+                            <!--Contact List Start-->
+                            <ul class="chat-contact-list custom-scroll"  >
+                                <li>
+                                    <a href="#">
+                                        <div class="image"><img src="/assets/theme/assets/images/comment/comment-1.jpg" alt=""><span class="status online"></span></div>
+                                        <div class="content">
+                                            <input type="hidden" value="<%=name%>" id="name">
+                                            <h5 class="name"><%=name%>님</h5>
+                                            <p class="last-message">하하하하</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                            <!--Contact List End-->
+
+                        </div>
+                        <!--Chat Contacts End-->
+
+                        <!--Chat Active Contact Start-->
+                        <div class="chat-active-contact">
+                            <div class="chat-contact">
+                                <div class="image"><img src="/assets/theme/assets/images/avatar/avatar-1.jpg" alt=""></div>
+                                <div class="info">
+                                    <h5><%=name%>님</h5>
+                                    <span>접속시간: 1 hour ago</span>
+                                </div>
+                            </div>
+                            <div class="chat-contact-actions">
+                                <button class="button button-box button-round button-primary"><i class="zmdi zmdi-edit"></i></button>
+                            </div>
+                        </div>
+                        <!--Chat Active Contact End-->
+
+                        <!-- Chat Start -->
+                        <div class="chat-wrap custom-scroll mr-0" id="chat-list-group">
+                            <ul class="chat-list" id="chat-list">                                
+                            </ul>
+                        </div>
+
+                        <div class="chat-submission fixed-bottom" id="send-group">
+                            <form action="javascript:void(0);">
+                                <input type="text" placeholder="메시지를 입력해주세요." id="msg">
+                                <div class="buttons" id="send">
+                                    <button class="submit button button-box button-round button-primary"><i class="zmdi zmdi-mail-send"></i></button>
+                                </div>
+                            </form>
+                        </div><!-- Chat End -->
+
+                    </div>
+                </div><!-- Chat End Start -->
+            </div>
+
+        
+
+
+    </div>
+
+    <!-- JS
+============================================ -->
+
+    <!-- Global Vendor, plugins & Activation JS -->
+    <script src="/assets/theme/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/assets/theme/assets/js/vendor/jquery-3.3.1.min.js"></script>
+    <script src="/assets/theme/assets/js/vendor/popper.min.js"></script>
+    <script src="/assets/theme/assets/js/vendor/bootstrap.min.js"></script>
+    <!--Plugins JS-->
+    <script src="/assets/theme/assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="/assets/theme/assets/js/plugins/tippy4.min.js.js"></script>
+    <!--Main JS-->
+    <script src="/assets/theme/assets/js/main.js"></script>
+    <script>
+
+        function resize() {
+            const sendGroupHeight = $('#send-group').height();
+            const titleHeight = $('#title').height();
+            const screenHeight = $(window).height() - sendGroupHeight - titleHeight;
+            $('#screen').height(screenHeight);
+        }
+
+        function init() {
+            resize();
+            window.addEventListener('resize',resize);
+        }
+
+        init();
+    </script>
+    <script src="/assets/socket/socket.io.js"></script>
+    <script>
+
+        const socket = io();
+        const myName = $('#name').val();
+
+        $('#send').click(() => {
+            const msg = $('#msg').val();
+            const name = myName;
+            socket.emit('chat message', {name, msg});
+            $('#msg').val('');
+        });
+
+        socket.on('chat message', ({name, msg}) => {
+
+            if(name === myName) {
+                $('#chat-list').append(`<li>
+                                    <div class="my-msg">
+                                        <div class="chat">
+                                            <div class="head">
+                                                <h5>${name}</h5>
+                                            </div>
+                                            <div class="body">
+                                                <div class="image"><img src="/assets/theme/assets/images/comment/comment-1.jpg" alt=""></div>
+                                                <div class="content">
+                                                    <p>${msg}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>`);
+            } else {
+                $('#chat-list').append(`
+                                <li>
+                                    <div class="chat">
+                                        <div class="head">
+                                            <h5>${name}</h5>
+                                        </div>
+                                        <div class="body">
+                                            <div class="image"><img src="/assets/theme/assets/images/comment/comment-2.jpg" alt=""></div>
+                                            <div class="content">
+                                                <p>${msg}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                `);
+            }
+
+            $('#chat-list-group').animate({scrollTop : $('#chat-list-group').prop("scrollHeight")}, 1000);
+
+        });
+
+
+    </script>
+</body>
+
+</html>
